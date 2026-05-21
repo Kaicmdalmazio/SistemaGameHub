@@ -1,7 +1,8 @@
-C:\Users\strik\OneDrive\Documentos\NetBeansProjects\GameHubHibernate\src\main\java\DlgBibliotecaJogos.java
-C:\Users\strik\OneDrive\Documentos\NetBeansProjects\GameHubHibernate\src\main\java\DlgCarrinho.java
-C:\Users\strik\OneDrive\Documentos\NetBeansProjects\GameHubHibernate\src\main\java\DlgCriarConta.java
-C:\Users\strik\OneDrive\Documentos\NetBeansProjects\GameHubHibernate\src\main\java\DlgListaAmigos.java
-C:\Users\strik\OneDrive\Documentos\NetBeansProjects\GameHubHibernate\src\main\java\DlgPerfilUsuario.java
-C:\Users\strik\OneDrive\Documentos\NetBeansProjects\GameHubHibernate\src\main\java\DlgPesqJogosLoja.java
-C:\Users\strik\OneDrive\Documentos\NetBeansProjects\GameHubHibernate\src\main\java\frmPrincipal.java
+C:\Users\strik\OneDrive\Documentos\NetBeansProjects\GameHubHibernate\src\main\java\controller\GerenciadorDominio.java
+C:\Users\strik\OneDrive\Documentos\NetBeansProjects\GameHubHibernate\src\main\java\controller\GerenciadorInterfaceGrafica.java
+C:\Users\strik\OneDrive\Documentos\NetBeansProjects\GameHubHibernate\src\main\java\dao\ConexaoPostgresSQL.java
+C:\Users\strik\OneDrive\Documentos\NetBeansProjects\GameHubHibernate\src\main\java\view\DlgCadastrarAdicionarJogo.java
+C:\Users\strik\OneDrive\Documentos\NetBeansProjects\GameHubHibernate\src\main\java\view\DlgCadastrarCliente.java
+C:\Users\strik\OneDrive\Documentos\NetBeansProjects\GameHubHibernate\src\main\java\view\DlgPagamento.java
+C:\Users\strik\OneDrive\Documentos\NetBeansProjects\GameHubHibernate\src\main\java\view\DlgPesquisarCliente.java
+C:\Users\strik\OneDrive\Documentos\NetBeansProjects\GameHubHibernate\src\main\java\view\frmPrincipal.java

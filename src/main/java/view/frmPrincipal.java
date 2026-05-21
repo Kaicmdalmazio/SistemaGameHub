@@ -10,7 +10,8 @@ package view;
  * @author strik
  */
 public class frmPrincipal extends javax.swing.JFrame {
-
+    
+    
     /**
      * Creates new form frmPrincipal
      */
@@ -28,14 +29,12 @@ public class frmPrincipal extends javax.swing.JFrame {
     private void initComponents() {
 
         jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         mnuPerfil = new javax.swing.JMenu();
         mnuLogin = new javax.swing.JMenuItem();
-        CriarConta = new javax.swing.JMenuItem();
-        jMenuItem10 = new javax.swing.JMenuItem();
+        mnuCadCliente = new javax.swing.JMenuItem();
         mnuConfig = new javax.swing.JMenuItem();
-        jSeparator2 = new javax.swing.JPopupMenu.Separator();
-        mnuSair = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         jMenu8 = new javax.swing.JMenu();
         jMenu9 = new javax.swing.JMenu();
@@ -51,59 +50,51 @@ public class frmPrincipal extends javax.swing.JFrame {
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         jMenuItem12 = new javax.swing.JMenuItem();
         jMenuItem5 = new javax.swing.JMenuItem();
-        jMenu4 = new javax.swing.JMenu();
-        jMenuItem6 = new javax.swing.JMenuItem();
-        jMenuItem8 = new javax.swing.JMenuItem();
-        jMenuItem4 = new javax.swing.JMenuItem();
         jMenu6 = new javax.swing.JMenu();
         jMenuItem7 = new javax.swing.JMenuItem();
         jMenuItem9 = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Cadastro Cliente");
 
         mnuPerfil.setMnemonic('o');
-        mnuPerfil.setText("Conta");
-
-        mnuLogin.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_M, java.awt.event.InputEvent.SHIFT_DOWN_MASK | java.awt.event.InputEvent.CTRL_DOWN_MASK));
-        mnuLogin.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/16x16/user.png"))); // NOI18N
-        mnuLogin.setText("Login");
-        mnuPerfil.add(mnuLogin);
-
-        CriarConta.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.ALT_DOWN_MASK | java.awt.event.InputEvent.CTRL_DOWN_MASK));
-        CriarConta.setIcon(new javax.swing.ImageIcon("C:\\Users\\strik\\Downloads\\user-add.png")); // NOI18N
-        CriarConta.setMnemonic('n');
-        CriarConta.setText("Criar Conta");
-        CriarConta.addActionListener(new java.awt.event.ActionListener() {
+        mnuPerfil.setText("Cadastro");
+        mnuPerfil.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                CriarContaActionPerformed(evt);
+                mnuPerfilActionPerformed(evt);
             }
         });
-        mnuPerfil.add(CriarConta);
 
-        jMenuItem10.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.SHIFT_DOWN_MASK | java.awt.event.InputEvent.CTRL_DOWN_MASK));
-        jMenuItem10.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/16x16/portrait.png"))); // NOI18N
-        jMenuItem10.setMnemonic('P');
-        jMenuItem10.setText("Perfil");
-        mnuPerfil.add(jMenuItem10);
+        mnuLogin.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_M, java.awt.event.InputEvent.SHIFT_DOWN_MASK | java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        mnuLogin.setText("Jogo");
+        mnuLogin.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mnuLoginActionPerformed(evt);
+            }
+        });
+        mnuPerfil.add(mnuLogin);
+
+        mnuCadCliente.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.ALT_DOWN_MASK | java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        mnuCadCliente.setIcon(new javax.swing.ImageIcon("C:\\Users\\strik\\Downloads\\user-add.png")); // NOI18N
+        mnuCadCliente.setMnemonic('n');
+        mnuCadCliente.setText("Cliente");
+        mnuCadCliente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mnuCadClienteActionPerformed(evt);
+            }
+        });
+        mnuPerfil.add(mnuCadCliente);
 
         mnuConfig.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_G, java.awt.event.InputEvent.ALT_DOWN_MASK | java.awt.event.InputEvent.SHIFT_DOWN_MASK | java.awt.event.InputEvent.CTRL_DOWN_MASK));
         mnuConfig.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/16x16/settings (2).png"))); // NOI18N
         mnuConfig.setMnemonic('g');
         mnuConfig.setText("Configurações");
         mnuPerfil.add(mnuConfig);
-        mnuPerfil.add(jSeparator2);
-
-        mnuSair.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4, java.awt.event.InputEvent.ALT_DOWN_MASK));
-        mnuSair.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/16x16/exit (1).png"))); // NOI18N
-        mnuSair.setMnemonic('S');
-        mnuSair.setText("Sair");
-        mnuPerfil.add(mnuSair);
 
         jMenuBar1.add(mnuPerfil);
 
-        jMenu2.setText("Biblioteca ");
+        jMenu2.setText("Pesquisar");
 
-        jMenu8.setIcon(new javax.swing.ImageIcon("C:\\Users\\strik\\Downloads\\controle-de-video-game.png")); // NOI18N
         jMenu8.setMnemonic('M');
         jMenu8.setText("Meu jogos");
 
@@ -134,15 +125,18 @@ public class frmPrincipal extends javax.swing.JFrame {
 
         jMenu2.add(jMenu8);
 
-        jMenuItem15.setIcon(new javax.swing.ImageIcon("C:\\Users\\strik\\Downloads\\familia.png")); // NOI18N
-        jMenuItem15.setText("Jogos da famila");
+        jMenuItem15.setText("Cliente");
+        jMenuItem15.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem15ActionPerformed(evt);
+            }
+        });
         jMenu2.add(jMenuItem15);
 
         jMenuBar1.add(jMenu2);
 
         jMenu3.setText("Loja");
 
-        jMenu5.setIcon(new javax.swing.ImageIcon("C:\\Users\\strik\\Downloads\\loja-de-jogos.png")); // NOI18N
         jMenu5.setText("Ver loja");
 
         jMenuItem11.setIcon(new javax.swing.ImageIcon("C:\\Users\\strik\\Downloads\\search.png")); // NOI18N
@@ -154,12 +148,10 @@ public class frmPrincipal extends javax.swing.JFrame {
         });
         jMenu5.add(jMenuItem11);
 
-        jMenuItem3.setIcon(new javax.swing.ImageIcon("C:\\Users\\strik\\Downloads\\lista-de-afazeres.png")); // NOI18N
         jMenuItem3.setText("Lista de desejos");
         jMenu5.add(jMenuItem3);
         jMenu5.add(jSeparator1);
 
-        jMenuItem12.setIcon(new javax.swing.ImageIcon("C:\\Users\\strik\\Downloads\\sack-dollar.png")); // NOI18N
         jMenuItem12.setText("Promoções");
         jMenu5.add(jMenuItem12);
 
@@ -170,22 +162,6 @@ public class frmPrincipal extends javax.swing.JFrame {
         jMenu3.add(jMenu5);
 
         jMenuBar1.add(jMenu3);
-
-        jMenu4.setText("Amigos");
-
-        jMenuItem6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/16x16/users-alt (2).png"))); // NOI18N
-        jMenuItem6.setText("Ver lista de amigos");
-        jMenu4.add(jMenuItem6);
-
-        jMenuItem8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/16x16/add (2).png"))); // NOI18N
-        jMenuItem8.setText("Adicionar amigo");
-        jMenu4.add(jMenuItem8);
-
-        jMenuItem4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/16x16/gift.png"))); // NOI18N
-        jMenuItem4.setText("Presentear amigo");
-        jMenu4.add(jMenuItem4);
-
-        jMenuBar1.add(jMenu4);
 
         jMenu6.setText("Ajuda");
 
@@ -204,11 +180,16 @@ public class frmPrincipal extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 414, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel1)
+                .addContainerGap(470, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 278, Short.MAX_VALUE)
+            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 412, Short.MAX_VALUE)
         );
 
         pack();
@@ -218,17 +199,34 @@ public class frmPrincipal extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jCheckBoxMenuItem1ActionPerformed
 
-    private void CriarContaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CriarContaActionPerformed
+    private void mnuCadClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnuCadClienteActionPerformed
         //criar um obj do tipo da janela que vai mostrar, this pq a gente ta programando na janela principal, e true para ela ser modal
-        DlgCriarConta objCriarConta = new DlgCriarConta(this, true);
+        DlgCadastrarCliente objCriarConta = new DlgCadastrarCliente(this, true);
         //pra mostrar a tela criar conta
         objCriarConta.setVisible(true);
-    }//GEN-LAST:event_CriarContaActionPerformed
+    }//GEN-LAST:event_mnuCadClienteActionPerformed
 
     private void jMenuItem11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem11ActionPerformed
-        DlgPesqJogosLoja objBuscarJogos = new DlgPesqJogosLoja(this, true);
+        DlgCadastrarAdicionarJogo objBuscarJogos = new DlgCadastrarAdicionarJogo(this, true);
         objBuscarJogos.setVisible(true);
     }//GEN-LAST:event_jMenuItem11ActionPerformed
+
+    private void mnuLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnuLoginActionPerformed
+        // TODO add your handling code here:
+        DlgCadastrarAdicionarJogo objBuscarJogos = new DlgCadastrarAdicionarJogo(this, true);
+        objBuscarJogos.setVisible(true);
+        
+    }//GEN-LAST:event_mnuLoginActionPerformed
+
+    private void mnuPerfilActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnuPerfilActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_mnuPerfilActionPerformed
+
+    private void jMenuItem15ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem15ActionPerformed
+        // TODO add your handling code here:
+        DlgPesquisarCliente objPesquisarCliente = new DlgPesquisarCliente(this, true);
+        objPesquisarCliente.setVisible(true);
+    }//GEN-LAST:event_jMenuItem15ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -266,36 +264,30 @@ public class frmPrincipal extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JMenuItem CriarConta;
     private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItem1;
     private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItem2;
     private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItem3;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
-    private javax.swing.JMenu jMenu4;
     private javax.swing.JMenu jMenu5;
     private javax.swing.JMenu jMenu6;
     private javax.swing.JMenu jMenu8;
     private javax.swing.JMenu jMenu9;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
-    private javax.swing.JMenuItem jMenuItem10;
     private javax.swing.JMenuItem jMenuItem11;
     private javax.swing.JMenuItem jMenuItem12;
     private javax.swing.JMenuItem jMenuItem15;
     private javax.swing.JMenuItem jMenuItem3;
-    private javax.swing.JMenuItem jMenuItem4;
     private javax.swing.JMenuItem jMenuItem5;
-    private javax.swing.JMenuItem jMenuItem6;
     private javax.swing.JMenuItem jMenuItem7;
-    private javax.swing.JMenuItem jMenuItem8;
     private javax.swing.JMenuItem jMenuItem9;
     private javax.swing.JPopupMenu.Separator jSeparator1;
-    private javax.swing.JPopupMenu.Separator jSeparator2;
+    private javax.swing.JMenuItem mnuCadCliente;
     private javax.swing.JMenuItem mnuConfig;
     private javax.swing.JMenuItem mnuLogin;
     private javax.swing.JMenu mnuPerfil;
-    private javax.swing.JMenuItem mnuSair;
     // End of variables declaration//GEN-END:variables
 }
