@@ -125,6 +125,11 @@ public class Cliente {
     public void setVendas(List<Venda> vendas) {
         this.vendas = vendas;
     }
+
+    @Override
+    public String toString() {
+        return nome + " - " + cpf;
+    }
 }
     
     

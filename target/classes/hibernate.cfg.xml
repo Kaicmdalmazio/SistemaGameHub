@@ -13,7 +13,9 @@
     <property name="hibernate.show_sql">true</property>
     <property name="hibernate.format_sql">true</property>
     
-    <property name="hibernate.hbm2ddl.auto">create</property>
+    <!--<property name="hibernate.hbm2ddl.auto">create</property>-->
+<!--    agora vamos adicionar-->
+    <property name="hibernate.hbm2ddl.auto">update</property>
     
     <mapping class="domain.Cliente"></mapping>
     <mapping class="domain.Venda"></mapping>

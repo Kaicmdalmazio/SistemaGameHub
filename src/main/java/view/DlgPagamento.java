@@ -1,7 +1,10 @@
 package view;
 
-
+import domain.Cliente;
+import java.text.NumberFormat;
+import java.util.Locale;
 import javax.swing.JCheckBox;
+import javax.swing.JOptionPane;
 import javax.swing.JSpinner;
 
 /*
@@ -15,12 +18,28 @@ import javax.swing.JSpinner;
  */
 public class DlgPagamento extends javax.swing.JDialog {
 
+    private final NumberFormat formatoMoeda = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
+    private float valorTotal;
+    private boolean pagamentoConfirmado;
+    private Cliente clientePagamento;
+
     /**
      * Creates new form DlgCarrinho
      */
     public DlgPagamento(java.awt.Frame parent, boolean modal) {
+        this(parent, modal, 0);
+    }
+
+    public DlgPagamento(java.awt.Frame parent, boolean modal, float valorTotal) {
+        this(parent, modal, valorTotal, null);
+    }
+
+    public DlgPagamento(java.awt.Frame parent, boolean modal, float valorTotal, Cliente clientePagamento) {
         super(parent, modal);
+        this.valorTotal = valorTotal;
+        this.clientePagamento = clientePagamento;
         initComponents();
+        ajustarDesign(parent);
     }
 
     /**
@@ -55,12 +74,12 @@ public class DlgPagamento extends javax.swing.JDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Forma de Pagamento"));
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Forma de pagamento"));
 
         jLabel1.setText("Por favor, selecione uma forma de pagamento");
 
         jComboBox1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Pix", "Boleto bancario", "Cartão ", " " }));
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Pix", "Boleto bancário", "Cartão" }));
 
         jLabel2.setText("Informe o CPF novamente");
 
@@ -75,7 +94,7 @@ public class DlgPagamento extends javax.swing.JDialog {
             }
         });
 
-        jLabel3.setText("Email");
+        jLabel3.setText("E-mail");
 
         jTextField1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -87,7 +106,7 @@ public class DlgPagamento extends javax.swing.JDialog {
         bntConfirmar.setText("Confirmar");
 
         jLabel4.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel4.setText("Valor Total");
+        jLabel4.setText("Valor total");
 
         jLabel9.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         jLabel9.setForeground(new java.awt.Color(255, 51, 51));
@@ -96,9 +115,9 @@ public class DlgPagamento extends javax.swing.JDialog {
         bntConfirmar1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/16x16/sign-out-alt (2).png"))); // NOI18N
         bntConfirmar1.setText("Cancelar");
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Dados Cartão"));
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Dados do cartão"));
 
-        jLabel5.setText("Número Cartão");
+        jLabel5.setText("Número do cartão");
 
         try {
             jFormattedTextField2.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("#### #### #### ####")));
@@ -114,9 +133,9 @@ public class DlgPagamento extends javax.swing.JDialog {
             ex.printStackTrace();
         }
 
-        jLabel7.setText("Nome ");
+        jLabel7.setText("Nome do titular");
 
-        jLabel8.setText("CVC");
+        jLabel8.setText("CVV");
 
         try {
             jFormattedTextField4.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("###")));
@@ -177,27 +196,24 @@ public class DlgPagamento extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(34, 34, 34)
-                        .addComponent(bntConfirmar, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(bntConfirmar1, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(39, 39, 39))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 263, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jFormattedTextField1)
-                                .addComponent(jTextField1)
-                                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGap(12, 12, 12)
-                                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addContainerGap(30, Short.MAX_VALUE))))
+                        .addGap(12, 12, 12)
+                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addGroup(jPanel2Layout.createSequentialGroup()
+                            .addComponent(bntConfirmar, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(54, 54, 54)
+                            .addComponent(bntConfirmar1, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 263, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jFormattedTextField1)
+                            .addComponent(jTextField1)
+                            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                .addContainerGap(59, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -221,10 +237,10 @@ public class DlgPagamento extends javax.swing.JDialog {
                     .addComponent(jLabel4)
                     .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(bntConfirmar)
-                    .addComponent(bntConfirmar1))
-                .addContainerGap(15, Short.MAX_VALUE))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(bntConfirmar1)
+                    .addComponent(bntConfirmar))
+                .addContainerGap(41, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -238,7 +254,9 @@ public class DlgPagamento extends javax.swing.JDialog {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(18, Short.MAX_VALUE))
         );
 
         pack();
@@ -251,6 +269,119 @@ public class DlgPagamento extends javax.swing.JDialog {
     private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextField1ActionPerformed
+
+    private void ajustarDesign(java.awt.Frame parent) {
+        setTitle("Pagamento");
+        setLocationRelativeTo(parent);
+        setResizable(false);
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Forma de pagamento"));
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[]{"Pix", "Boleto bancário", "Cartão"}));
+        jLabel3.setText("E-mail");
+        jLabel4.setText("Valor total");
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Dados do cartão"));
+        jLabel5.setText("Número do cartão");
+        jLabel7.setText("Nome do titular");
+        jLabel8.setText("CVV");
+        jLabel9.setText(formatoMoeda.format(valorTotal));
+        preencherDadosCliente();
+        jComboBox1.addActionListener(evt -> atualizarDadosCartao());
+        bntConfirmar1.addActionListener(evt -> dispose());
+        bntConfirmar.addActionListener(evt -> confirmarPagamento());
+        atualizarDadosCartao();
+    }
+
+    private void atualizarDadosCartao() {
+        boolean cartaoSelecionado = "Cartão".equals(jComboBox1.getSelectedItem());
+        jPanel1.setVisible(cartaoSelecionado);
+        pack();
+    }
+
+    private void preencherDadosCliente() {
+        if (clientePagamento == null) {
+            return;
+        }
+
+        jFormattedTextField1.setText(clientePagamento.getCpf());
+        jTextField1.setText(clientePagamento.getEndereco());
+    }
+
+    private void confirmarPagamento() {
+        String erros = validarCamposPagamento();
+        if (!erros.isEmpty()) {
+            JOptionPane.showMessageDialog(this, erros, "Pagamento", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        JOptionPane.showMessageDialog(this, "Pagamento confirmado.\nValor total: " + formatoMoeda.format(valorTotal));
+        pagamentoConfirmado = true;
+        dispose();
+    }
+
+    private String validarCamposPagamento() {
+        StringBuilder erros = new StringBuilder();
+        String formaPagamento = String.valueOf(jComboBox1.getSelectedItem());
+
+        if (somenteDigitos(jFormattedTextField1.getText()).isEmpty()) {
+            erros.append("- Informe o CPF.\n");
+        }
+
+        if (!emailValido(jTextField1.getText())) {
+            erros.append("- Informe um e-mail válido.\n");
+        }
+
+        if ("Cartão".equals(formaPagamento)) {
+            if (campoVazio(jTextField2.getText())) {
+                erros.append("- Informe o nome do titular.\n");
+            }
+            if (somenteDigitos(jFormattedTextField2.getText()).length() < 13) {
+                erros.append("- Informe o número do cartão.\n");
+            }
+            if (somenteDigitos(jFormattedTextField3.getText()).length() < 4) {
+                erros.append("- Informe a validade do cartão.\n");
+            }
+            if (somenteDigitos(jFormattedTextField4.getText()).length() < 3) {
+                erros.append("- Informe o CVV.\n");
+            }
+        }
+
+        validarDadosDoCliente(erros);
+
+        return erros.toString();
+    }
+
+    private void validarDadosDoCliente(StringBuilder erros) {
+        if (clientePagamento == null) {
+            return;
+        }
+
+        String cpfDigitado = somenteDigitos(jFormattedTextField1.getText());
+        String cpfCadastrado = somenteDigitos(clientePagamento.getCpf());
+        if (!cpfDigitado.equals(cpfCadastrado)) {
+            erros.append("- O CPF informado deve ser o mesmo CPF cadastrado para o cliente.\n");
+        }
+
+        String emailDigitado = jTextField1.getText() == null ? "" : jTextField1.getText().trim();
+        String emailCadastrado = clientePagamento.getEndereco() == null ? "" : clientePagamento.getEndereco().trim();
+        if (!emailDigitado.equalsIgnoreCase(emailCadastrado)) {
+            erros.append("- O e-mail informado deve ser o mesmo e-mail cadastrado para o cliente.\n");
+        }
+    }
+
+    private boolean emailValido(String email) {
+        return email != null && email.trim().toLowerCase().endsWith("@gmail.com");
+    }
+
+    private boolean campoVazio(String valor) {
+        return valor == null || valor.trim().isEmpty();
+    }
+
+    private String somenteDigitos(String valor) {
+        return valor == null ? "" : valor.replaceAll("\\D", "");
+    }
+
+    public boolean isPagamentoConfirmado() {
+        return pagamentoConfirmado;
+    }
 
     private void habilitarSpinner(JCheckBox chk, JSpinner spn){
         if(chk.isSelected()){

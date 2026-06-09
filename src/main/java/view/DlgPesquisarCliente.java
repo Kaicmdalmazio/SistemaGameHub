@@ -1,5 +1,16 @@
 package view;
 
+import controller.GerenciadorInterfaceGrafica;
+import domain.Cliente;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.JOptionPane;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.table.DefaultTableModel;
+import org.hibernate.HibernateException;
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JDialog.java to edit this template
@@ -11,12 +22,21 @@ package view;
  */
 public class DlgPesquisarCliente extends javax.swing.JDialog {
 
+    private final SimpleDateFormat formatoData = new SimpleDateFormat("dd/MM/yyyy");
+    private List<Cliente> clientesCadastrados = new ArrayList<>();
+    private Cliente clienteSelecionado;
+
     /**
      * Creates new form PesquisarCliente
      */
     public DlgPesquisarCliente(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        ajustarDesign(parent);
+        jTextField1.setText("");
+        configurarFiltroAoDigitar();
+        carregarClientesDoBanco();
+        filtrarClientes("");
     }
 
     /**
@@ -42,7 +62,14 @@ public class DlgPesquisarCliente extends javax.swing.JDialog {
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Pesquisar Cliente"));
 
-        jLabel1.setText("Nome");
+        jLabel1.setText("Buscar cliente");
+
+        jTextField1.setText("Nome, CPF ou email");
+        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextField1ActionPerformed(evt);
+            }
+        });
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -52,16 +79,21 @@ public class DlgPesquisarCliente extends javax.swing.JDialog {
                 {null, null, null, null, null}
             },
             new String [] {
-                "Nome", "Email", "CPF", "Data Nacimento", "Telefone"
+                "Nome", "Email", "CPF", "Data Nasc.", "Telefone"
             }
         ));
         jScrollPane1.setViewportView(jTable1);
 
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/16x16/add (2).png"))); // NOI18N
         jButton1.setText("Selecionar");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/16x16/cross-circle (2).png"))); // NOI18N
-        jButton2.setText("Excluir");
+        jButton2.setText("Limpar");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);
@@ -69,30 +101,41 @@ public class DlgPesquisarCliente extends javax.swing.JDialog {
         });
 
         bntCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/16x16/sign-out-alt (2).png"))); // NOI18N
-        bntCancelar.setText("Cancelar");
+        bntCancelar.setText("Fechar");
+        bntCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bntCancelarActionPerformed(evt);
+            }
+        });
 
-        jButton3.setIcon(new javax.swing.ImageIcon("C:\\Users\\strik\\Downloads\\lupa.png")); // NOI18N
+        jButton3.setText("Pesquisar");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(30, 30, 30)
+                .addGap(26, 26, 26)
                 .addComponent(jButton1)
-                .addGap(33, 33, 33)
-                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(27, 27, 27)
                 .addComponent(bntCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(31, 31, 31))
+                .addGap(37, 37, 37))
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap()
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jTextField1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 284, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 419, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(0, 12, Short.MAX_VALUE))
         );
@@ -100,18 +143,19 @@ public class DlgPesquisarCliente extends javax.swing.JDialog {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButton3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel1)
+                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(14, 14, 14)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 239, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addGap(26, 26, 26)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
                     .addComponent(jButton2)
                     .addComponent(bntCancelar))
-                .addContainerGap(79, Short.MAX_VALUE))
+                .addContainerGap(37, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -134,9 +178,132 @@ public class DlgPesquisarCliente extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
-        this.dispose();
+        jTextField1.setText("");
+        filtrarClientes("");
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void bntCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bntCancelarActionPerformed
+        this.dispose();
+    }//GEN-LAST:event_bntCancelarActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        carregarClientesDoBanco();
+        filtrarClientes(jTextField1.getText());
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        selecionarCliente();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+        carregarClientesDoBanco();
+        filtrarClientes(jTextField1.getText());
+    }//GEN-LAST:event_jTextField1ActionPerformed
+
+    private void ajustarDesign(java.awt.Frame parent) {
+        setTitle("Pesquisar clientes");
+        setLocationRelativeTo(parent);
+        jTextField1.setToolTipText("Digite nome, CPF, e-mail ou telefone");
+        jTable1.setDefaultEditor(Object.class, null);
+        jTable1.setAutoCreateRowSorter(true);
+        jTable1.setFillsViewportHeight(true);
+        jButton1.setText("Selecionar");
+    }
+
+    private void configurarFiltroAoDigitar() {
+        jTextField1.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                filtrarClientes(jTextField1.getText());
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                filtrarClientes(jTextField1.getText());
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                filtrarClientes(jTextField1.getText());
+            }
+        });
+    }
+
+    private void carregarClientesDoBanco() {
+        try {
+            clientesCadastrados = GerenciadorInterfaceGrafica.getMyInstance()
+                    .getGerenciadorDominio()
+                    .listar(Cliente.class);
+        } catch (HibernateException ex) {
+            clientesCadastrados = new ArrayList<>();
+            JOptionPane.showMessageDialog(this, "Erro ao pesquisar clientes: " + ex.getMessage(), "Pesquisar Cliente", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void filtrarClientes(String filtro) {
+        String textoFiltro = normalizar(filtro);
+        String filtroNumerico = somenteDigitos(filtro);
+        DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
+        modelo.setRowCount(0);
+
+        for (Cliente cliente : clientesCadastrados) {
+            if (deveMostrarCliente(cliente, textoFiltro, filtroNumerico)) {
+                modelo.addRow(new Object[]{
+                    cliente.getNome(),
+                    cliente.getEndereco(),
+                    cliente.getCpf(),
+                    cliente.getDtNascimento() == null ? "" : formatoData.format(cliente.getDtNascimento()),
+                    cliente.getTelefone()
+                });
+            }
+        }
+    }
+
+    private boolean deveMostrarCliente(Cliente cliente, String textoFiltro, String filtroNumerico) {
+        if (textoFiltro.isEmpty()) {
+            return true;
+        }
+
+        return normalizar(cliente.getNome()).contains(textoFiltro)
+                || normalizar(cliente.getEndereco()).contains(textoFiltro)
+                || normalizar(cliente.getCpf()).contains(textoFiltro)
+                || normalizar(cliente.getTelefone()).contains(textoFiltro)
+                || (!filtroNumerico.isEmpty() && somenteDigitos(cliente.getCpf()).contains(filtroNumerico))
+                || (!filtroNumerico.isEmpty() && somenteDigitos(cliente.getTelefone()).contains(filtroNumerico));
+    }
+
+    private String normalizar(String valor) {
+        return valor == null ? "" : valor.trim().toLowerCase();
+    }
+
+    private String somenteDigitos(String valor) {
+        return valor == null ? "" : valor.replaceAll("\\D", "");
+    }
+
+    private void selecionarCliente() {
+        int linhaSelecionada = jTable1.getSelectedRow();
+        if (linhaSelecionada < 0) {
+            JOptionPane.showMessageDialog(this, "Selecione um cliente na tabela.", "Pesquisar Cliente", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        int linhaModelo = jTable1.convertRowIndexToModel(linhaSelecionada);
+        String cpfSelecionado = String.valueOf(jTable1.getModel().getValueAt(linhaModelo, 2));
+
+        for (Cliente cliente : clientesCadastrados) {
+            if (cliente.getCpf() != null && cliente.getCpf().equals(cpfSelecionado)) {
+                clienteSelecionado = cliente;
+                dispose();
+                return;
+            }
+        }
+
+        JOptionPane.showMessageDialog(this, "Não foi possível identificar o cliente selecionado.", "Pesquisar Cliente", JOptionPane.WARNING_MESSAGE);
+    }
+
+    public Cliente getClienteSelecionado() {
+        return clienteSelecionado;
+    }
 
     /**
      * @param args the command line arguments

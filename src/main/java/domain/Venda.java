@@ -94,4 +94,9 @@ public class Venda {
     public void setPagamento(Pagamento pagamento) {
         this.pagamento = pagamento;
     }
+
+    @Override
+    public String toString() {
+        return "Venda #" + idCompra + " - " + cliente + " - R$ " + valorVenda;
+    }
 }

@@ -17,6 +17,7 @@ public class frmPrincipal extends javax.swing.JFrame {
      */
     public frmPrincipal() {
         initComponents();
+        ajustarDesign();
     }
 
     /**
@@ -28,6 +29,7 @@ public class frmPrincipal extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        pnlInicio = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
@@ -57,6 +59,39 @@ public class frmPrincipal extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Cadastro Cliente");
 
+        pnlInicio.setBackground(new java.awt.Color(18, 78, 102));
+
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 40)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setText("GameHub");
+
+        jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        jLabel2.setForeground(new java.awt.Color(220, 245, 242));
+        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel2.setText("<html><div style='text-align:center;'>Cadastre clientes, venda jogos e acompanhe compras em um so lugar.</div></html>");
+
+        javax.swing.GroupLayout pnlInicioLayout = new javax.swing.GroupLayout(pnlInicio);
+        pnlInicio.setLayout(pnlInicioLayout);
+        pnlInicioLayout.setHorizontalGroup(
+            pnlInicioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+            .addGroup(pnlInicioLayout.createSequentialGroup()
+                .addContainerGap(64, Short.MAX_VALUE)
+                .addGroup(pnlInicioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 584, Short.MAX_VALUE)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 584, Short.MAX_VALUE))
+                .addContainerGap(64, Short.MAX_VALUE))
+        );
+        pnlInicioLayout.setVerticalGroup(
+            pnlInicioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlInicioLayout.createSequentialGroup()
+                .addContainerGap(136, Short.MAX_VALUE)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(16, 16, 16)
+                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(136, Short.MAX_VALUE))
+        );
+
         mnuPerfil.setMnemonic('o');
         mnuPerfil.setText("Cadastro");
         mnuPerfil.addActionListener(new java.awt.event.ActionListener() {
@@ -75,7 +110,7 @@ public class frmPrincipal extends javax.swing.JFrame {
         mnuPerfil.add(mnuLogin);
 
         mnuCadCliente.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.ALT_DOWN_MASK | java.awt.event.InputEvent.CTRL_DOWN_MASK));
-        mnuCadCliente.setIcon(new javax.swing.ImageIcon("C:\\Users\\strik\\Downloads\\user-add.png")); // NOI18N
+        mnuCadCliente.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/16x16/user-add.png"))); // NOI18N
         mnuCadCliente.setMnemonic('n');
         mnuCadCliente.setText("Cliente");
         mnuCadCliente.addActionListener(new java.awt.event.ActionListener() {
@@ -98,7 +133,7 @@ public class frmPrincipal extends javax.swing.JFrame {
         jMenu8.setMnemonic('M');
         jMenu8.setText("Meu jogos");
 
-        jMenu9.setIcon(new javax.swing.ImageIcon("C:\\Users\\strik\\Downloads\\search (1).png")); // NOI18N
+        jMenu9.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/16x16/menu-burger.png"))); // NOI18N
         jMenu9.setText("Filtrar por");
 
         jCheckBoxMenuItem1.setSelected(true);
@@ -139,7 +174,7 @@ public class frmPrincipal extends javax.swing.JFrame {
 
         jMenu5.setText("Ver loja");
 
-        jMenuItem11.setIcon(new javax.swing.ImageIcon("C:\\Users\\strik\\Downloads\\search.png")); // NOI18N
+        jMenuItem11.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/16x16/gift.png"))); // NOI18N
         jMenuItem11.setText("Buscar jogos");
         jMenuItem11.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -180,16 +215,11 @@ public class frmPrincipal extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel1)
-                .addContainerGap(485, Short.MAX_VALUE))
+            .addComponent(pnlInicio, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 412, Short.MAX_VALUE)
+            .addComponent(pnlInicio, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -227,6 +257,41 @@ public class frmPrincipal extends javax.swing.JFrame {
         DlgPesquisarCliente objPesquisarCliente = new DlgPesquisarCliente(this, true);
         objPesquisarCliente.setVisible(true);
     }//GEN-LAST:event_jMenuItem15ActionPerformed
+
+    private void ajustarDesign() {
+        setTitle("Sistema GameHub");
+        setLocationRelativeTo(null);
+        setMinimumSize(new java.awt.Dimension(720, 480));
+        mnuCadCliente.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/16x16/user-add.png")));
+        mnuConfig.setText("Configurações");
+        jMenu8.setText("Meus jogos");
+        jMenu9.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/16x16/menu-burger.png")));
+        jCheckBoxMenuItem1.setText("Número de jogadores");
+        jCheckBoxMenuItem3.setText("Gênero");
+        jMenuItem11.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/16x16/gift.png")));
+        jMenuItem12.setText("Promoções");
+        configurarTelaInicial();
+        javax.swing.JMenuItem mnuHistoricoCliente = new javax.swing.JMenuItem("Historico de compras");
+        mnuHistoricoCliente.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/24x24/list_alt_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.png")));
+        mnuHistoricoCliente.addActionListener(evt -> {
+            DlgHistoricoCliente tela = new DlgHistoricoCliente(this, true);
+            tela.setVisible(true);
+        });
+        jMenu2.add(mnuHistoricoCliente);
+    }
+
+    private void configurarTelaInicial() {
+        pnlInicio.setBackground(new java.awt.Color(18, 78, 102));
+        jLabel1.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 40));
+        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setText("GameHub");
+
+        jLabel2.setFont(new java.awt.Font("Segoe UI", java.awt.Font.PLAIN, 18));
+        jLabel2.setForeground(new java.awt.Color(220, 245, 242));
+        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel2.setText("<html><div style='text-align:center;'>Cadastre clientes, venda jogos e acompanhe compras em um so lugar.</div></html>");
+    }
 
     /**
      * @param args the command line arguments
@@ -289,5 +354,6 @@ public class frmPrincipal extends javax.swing.JFrame {
     private javax.swing.JMenuItem mnuConfig;
     private javax.swing.JMenuItem mnuLogin;
     private javax.swing.JMenu mnuPerfil;
+    private javax.swing.JPanel pnlInicio;
     // End of variables declaration//GEN-END:variables
 }

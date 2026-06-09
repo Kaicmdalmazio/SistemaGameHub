@@ -1,5 +1,11 @@
 package view;
 
+import controller.GerenciadorInterfaceGrafica;
+import domain.Cliente;
+import java.util.Date;
+import javax.swing.JOptionPane;
+import org.hibernate.HibernateException;
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JDialog.java to edit this template
@@ -14,9 +20,16 @@ public class DlgCadastrarCliente extends javax.swing.JDialog {
     /**
      * Creates new form DlgCriarConta
      */
+    
+    
+    private Cliente cliSelecionado;
+    
+    
     public DlgCadastrarCliente(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        ajustarDesign(parent);
+//        habilitarBotoes();
     }
 
     /**
@@ -59,7 +72,7 @@ public class DlgCadastrarCliente extends javax.swing.JDialog {
         jLabel5.setText("CPF");
 
         jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/16x16/add (2).png"))); // NOI18N
-        jButton2.setText("Novo");
+        jButton2.setText("Salvar");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);
@@ -107,13 +120,11 @@ public class DlgCadastrarCliente extends javax.swing.JDialog {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(25, 25, 25)
+                .addGap(47, 47, 47)
                 .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(bntCancelar)
-                .addGap(18, 18, 18)
-                .addComponent(jButton3)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addGap(49, 49, 49))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(23, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
@@ -129,6 +140,10 @@ public class DlgCadastrarCliente extends javax.swing.JDialog {
                     .addComponent(jFormattedTextField3, javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(txtFildCpf, javax.swing.GroupLayout.Alignment.LEADING))
                 .addGap(41, 41, 41))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(131, 131, 131)
+                .addComponent(jButton3)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -155,10 +170,11 @@ public class DlgCadastrarCliente extends javax.swing.JDialog {
                 .addComponent(jLabel6)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jFormattedTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 49, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jButton3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 14, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton2)
-                    .addComponent(jButton3)
                     .addComponent(bntCancelar))
                 .addGap(34, 34, 34))
         );
@@ -167,7 +183,7 @@ public class DlgCadastrarCliente extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
+        salvarCliente();
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void txtFildCpfActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtFildCpfActionPerformed
@@ -180,8 +196,89 @@ public class DlgCadastrarCliente extends javax.swing.JDialog {
     }//GEN-LAST:event_bntCancelarActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        // TODO add your handling code here:
+        JOptionPane.showMessageDialog(this, "Nesta etapa foi implementado apenas o cadastro de novos clientes.");
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void ajustarDesign(java.awt.Frame parent) {
+        setTitle("Cadastrar cliente");
+        setLocationRelativeTo(parent);
+        setResizable(false);
+        jButton2.setText("Salvar");
+        jButton3.setVisible(false);
+        getRootPane().setDefaultButton(jButton2);
+        jTextField2.setToolTipText("Nome completo do cliente");
+        jTextField1.setToolTipText("E-mail do cliente");
+        txtFildCpf.setToolTipText("CPF do cliente");
+        jFormattedTextField3.setToolTipText("Telefone do cliente");
+    }
+
+    private void salvarCliente() {
+        String nome = jTextField2.getText().trim();
+        String email = jTextField1.getText().trim();
+        String cpf = txtFildCpf.getText().trim();
+        Date dataNascimento = jDateChooser1.getDate();
+        String telefone = jFormattedTextField3.getText().trim();
+        String cpfNumerico = somenteDigitos(cpf);
+        String telefoneNumerico = somenteDigitos(telefone);
+
+        if (nome.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Informe o nome do cliente.", "Cadastro de Cliente", JOptionPane.WARNING_MESSAGE);
+            jTextField2.requestFocus();
+            return;
+        }
+
+        if (!emailGmailValido(email)) {
+            JOptionPane.showMessageDialog(this, "Informe um e-mail válido terminado em @gmail.com.", "Cadastro de Cliente", JOptionPane.WARNING_MESSAGE);
+            jTextField1.requestFocus();
+            return;
+        }
+
+        if (cpfNumerico.length() != 11) {
+            JOptionPane.showMessageDialog(this, "Informe o CPF completo do cliente.", "Cadastro de Cliente", JOptionPane.WARNING_MESSAGE);
+            txtFildCpf.requestFocus();
+            return;
+        }
+
+        if (dataNascimento == null) {
+            JOptionPane.showMessageDialog(this, "Informe a data de nascimento do cliente.", "Cadastro de Cliente", JOptionPane.WARNING_MESSAGE);
+            jDateChooser1.requestFocus();
+            return;
+        }
+
+        if (telefoneNumerico.length() < 10 || telefoneNumerico.length() > 11) {
+            JOptionPane.showMessageDialog(this, "Informe um telefone válido para o cliente.", "Cadastro de Cliente", JOptionPane.WARNING_MESSAGE);
+            jFormattedTextField3.requestFocus();
+            return;
+        }
+
+        Cliente cliente = new Cliente(nome, email, cpf, dataNascimento, telefone);
+
+        try {
+            GerenciadorInterfaceGrafica.getMyInstance().getGerenciadorDominio().inserir(cliente);
+            JOptionPane.showMessageDialog(this, "Cliente cadastrado com sucesso.");
+            limparCampos();
+        } catch (HibernateException ex) {
+            JOptionPane.showMessageDialog(this, "Erro ao cadastrar cliente: " + ex.getMessage(), "Cadastro de Cliente", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private String somenteDigitos(String valor) {
+        return valor == null ? "" : valor.replaceAll("\\D", "");
+    }
+
+    private boolean emailGmailValido(String email) {
+        return email != null && email.trim().toLowerCase().endsWith("@gmail.com");
+    }
+
+    private void limparCampos() {
+        jTextField2.setText("");
+        jTextField1.setText("");
+        txtFildCpf.setValue(null);
+        jDateChooser1.setDate(null);
+        jFormattedTextField3.setValue(null);
+        cliSelecionado = null;
+        jTextField2.requestFocus();
+    }
 
     /**
      * @param args the command line arguments
@@ -225,6 +322,21 @@ public class DlgCadastrarCliente extends javax.swing.JDialog {
             }
         });
     }
+    
+    
+    
+//     private void habilitarBotoes() {
+//        if ( cliSelecionado == null ) {
+//            // NOVO
+//            btnNovo.setVisible(true);
+//            btnAlterar.setVisible(false);
+//            
+//        } else {
+//            // EDIÇÃO
+//            btnNovo.setVisible(false);
+//            btnAlterar.setVisible(true);            
+//        }
+//    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton bntCancelar;

@@ -1,5 +1,20 @@
 package view;
 
+import controller.GerenciadorInterfaceGrafica;
+import domain.Cliente;
+import domain.ItemVenda;
+import domain.Jogo;
+import domain.Venda;
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import javax.swing.DefaultListModel;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import org.hibernate.HibernateException;
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JDialog.java to edit this template
@@ -11,12 +26,31 @@ package view;
  */
 public class DlgCadastrarAdicionarJogo extends javax.swing.JDialog {
 
+    private Cliente clienteSelecionado;
+    private List<Jogo> jogosDisponiveis = new ArrayList<>();
+    private List<Jogo> jogosVenda = new ArrayList<>();
+    private List<Integer> quantidadesVenda = new ArrayList<>();
+    private List<Float> subtotaisItens = new ArrayList<>();
+    private float valorTotal;
+    private final NumberFormat formatoMoeda = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
+
     /**
      * Creates new form DlgPesqJogos
      */
     public DlgCadastrarAdicionarJogo(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        ajustarDesign(parent);
+        bntAdicionar.addActionListener(evt -> adicionarItemNaTabela());
+        jButton6.addActionListener(evt -> salvarJogo());
+        jList1.addListSelectionListener(evt -> {
+            if (!evt.getValueIsAdjusting()) {
+                atualizarPrecoSelecionado();
+            }
+        });
+        jSpinner1.addChangeListener(evt -> atualizarPrecoSelecionado());
+        jCheckBox1.setSelected(true);
+        carregarJogosDisponiveis();
     }
 
     /**
@@ -65,7 +99,6 @@ public class DlgCadastrarAdicionarJogo extends javax.swing.JDialog {
         jLabel13 = new javax.swing.JLabel();
         jCheckBox1 = new javax.swing.JCheckBox();
         jCheckBox2 = new javax.swing.JCheckBox();
-        jPanel3 = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
         jButton6 = new javax.swing.JButton();
         bntCancelar = new javax.swing.JButton();
@@ -97,7 +130,7 @@ public class DlgCadastrarAdicionarJogo extends javax.swing.JDialog {
         });
 
         bntaCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/16x16/exit (1).png"))); // NOI18N
-        bntaCancelar.setText("Canceclar");
+        bntaCancelar.setText("Cancelar");
         bntaCancelar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 bntaCancelarActionPerformed(evt);
@@ -106,7 +139,7 @@ public class DlgCadastrarAdicionarJogo extends javax.swing.JDialog {
 
         jLabel2.setText("Cliente ");
 
-        bntPesquisar.setIcon(new javax.swing.ImageIcon("C:\\Users\\strik\\Downloads\\search.png")); // NOI18N
+        bntPesquisar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/16x16/user.png"))); // NOI18N
         bntPesquisar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 bntPesquisarActionPerformed(evt);
@@ -183,8 +216,9 @@ public class DlgCadastrarAdicionarJogo extends javax.swing.JDialog {
                                 .addComponent(BntExcluir, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(bntFinalizar, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(bntaCancelar))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(bntaCancelar)
+                                .addGap(6, 6, 6))
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 441, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
@@ -192,10 +226,11 @@ public class DlgCadastrarAdicionarJogo extends javax.swing.JDialog {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(7, 7, 7)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(bntPesquisar, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(bntPesquisar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel2)
+                        .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(13, 13, 13)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -212,14 +247,14 @@ public class DlgCadastrarAdicionarJogo extends javax.swing.JDialog {
                     .addComponent(jLabel4)
                     .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(12, 12, 12)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(bntAdicionar)
                     .addComponent(BntExcluir)
-                    .addComponent(bntaCancelar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(bntFinalizar))
-                .addContainerGap())
+                    .addComponent(bntFinalizar)
+                    .addComponent(bntaCancelar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(52, 52, 52))
         );
 
         jTabbedPane1.addTab("Adicionar jogo", jPanel1);
@@ -248,12 +283,12 @@ public class DlgCadastrarAdicionarJogo extends javax.swing.JDialog {
         jLabel10.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel10.setText("Plataforma");
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Xbox 360", "PlayStation 4 ", "Xbox Series X", "Xbox Series S", "PlayStation 5 ", "PlayStation 2" }));
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Xbox 360", "PlayStation 4 ", "Xbox Series X", "Xbox Series S", "PlayStation 5 ", "PlayStation 2", "PlayStation 2", "Xbox One " }));
 
         jLabel11.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel11.setText("Gênero");
 
-        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Ação", "Suspense", "Aventura", "RPG" }));
+        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Ação", "Suspense", "Aventura", "RPG", "Estratégia", "Esportes", "Samdox", "Plataforma", " " }));
 
         jLabel12.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel12.setText("Status");
@@ -273,19 +308,6 @@ public class DlgCadastrarAdicionarJogo extends javax.swing.JDialog {
 
         bntClassificacao.add(jCheckBox2);
         jCheckBox2.setText("Indisponível");
-
-        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Descrição"));
-
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 66, Short.MAX_VALUE)
-        );
 
         jButton1.setText("Limpar");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -309,82 +331,79 @@ public class DlgCadastrarAdicionarJogo extends javax.swing.JDialog {
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(25, 25, 25)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jLabel12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jLabel13, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addGap(38, 38, 38)
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jComboBox2, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jComboBox3, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addGroup(jPanel2Layout.createSequentialGroup()
-                                        .addComponent(jCheckBox1)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(jCheckBox2))
-                                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 251, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(txtFildPreço)
-                                    .addComponent(jSpinner2)))))
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel13, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(38, 38, 38))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(22, 22, 22)))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(53, 53, 53)
-                        .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(16, 16, 16)
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 42, Short.MAX_VALUE)
+                        .addComponent(bntCancelar))
+                    .addComponent(jComboBox1, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jComboBox2, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jComboBox3, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(txtFildPreço)
+                    .addComponent(jSpinner2)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jCheckBox1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton1)
-                        .addGap(63, 63, 63)
-                        .addComponent(bntCancelar)))
+                        .addComponent(jCheckBox2))
+                    .addComponent(jTextField3))
                 .addGap(51, 51, 51))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(23, 23, 23)
+                .addGap(31, 31, 31)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel7)
                     .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6)
                     .addComponent(txtFildPreço, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jSpinner2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel5))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel10))
                 .addGap(18, 18, 18)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel5)
+                    .addComponent(jSpinner2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel10)
+                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel11)
                     .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel13)
                     .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jCheckBox1)
-                    .addComponent(jLabel12)
-                    .addComponent(jCheckBox2))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(29, 29, 29)
+                .addGap(27, 27, 27)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(bntCancelar)
+                    .addComponent(jLabel12)
+                    .addComponent(jCheckBox1)
+                    .addComponent(jCheckBox2))
+                .addGap(47, 47, 47)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton6)
                     .addComponent(jButton1)
-                    .addComponent(jButton6))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(bntCancelar))
+                .addContainerGap(182, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Cadastrar Jogo", jPanel2);
@@ -395,11 +414,15 @@ public class DlgCadastrarAdicionarJogo extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void bntPesquisarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bntPesquisarActionPerformed
-        // TODO add your handling code here: 
-        
-         DlgPesquisarCliente tela = new DlgPesquisarCliente(null, true);
-         tela.setLocationRelativeTo(null);
-         tela.setVisible(true);
+        DlgPesquisarCliente tela = new DlgPesquisarCliente(obterJanelaPai(), true);
+        tela.setLocationRelativeTo(this);
+        tela.setVisible(true);
+
+        Cliente cliente = tela.getClienteSelecionado();
+        if (cliente != null) {
+            clienteSelecionado = cliente;
+            jTextField2.setText(cliente.toString());
+        }
     }//GEN-LAST:event_bntPesquisarActionPerformed
 
     private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed
@@ -411,8 +434,7 @@ public class DlgCadastrarAdicionarJogo extends javax.swing.JDialog {
     }//GEN-LAST:event_jTextField3ActionPerformed
 
     private void BntExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BntExcluirActionPerformed
-        // TODO add your handling code here:
-        
+        excluirItemSelecionado();
     }//GEN-LAST:event_BntExcluirActionPerformed
 
     private void bntaCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bntaCancelarActionPerformed
@@ -421,7 +443,7 @@ public class DlgCadastrarAdicionarJogo extends javax.swing.JDialog {
     }//GEN-LAST:event_bntaCancelarActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
+        limparCamposJogo();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void bntCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bntCancelarActionPerformed
@@ -430,11 +452,288 @@ public class DlgCadastrarAdicionarJogo extends javax.swing.JDialog {
     }//GEN-LAST:event_bntCancelarActionPerformed
 
     private void bntFinalizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bntFinalizarActionPerformed
-        // TODO add your handling code here:
-        DlgPagamento tela = new DlgPagamento(null, true);
+        if (!validarFinalizacao()) {
+            return;
+        }
+
+        DlgPagamento tela = new DlgPagamento(obterJanelaPai(), true, valorTotal, clienteSelecionado);
         tela.setLocationRelativeTo(this);
         tela.setVisible(true);
+
+        if (tela.isPagamentoConfirmado()) {
+            salvarVenda();
+        }
     }//GEN-LAST:event_bntFinalizarActionPerformed
+
+    private java.awt.Frame obterJanelaPai() {
+        return getOwner() instanceof java.awt.Frame ? (java.awt.Frame) getOwner() : null;
+    }
+
+    private Jogo getJogoSelecionado() {
+        int indice = jList1.getSelectedIndex();
+        if (indice < 0 || indice >= jogosDisponiveis.size()) {
+            return null;
+        }
+        return jogosDisponiveis.get(indice);
+    }
+
+    private void atualizarPrecoSelecionado() {
+        Jogo jogo = getJogoSelecionado();
+        if (jogo == null) {
+            jLabel3.setText(formatarMoeda(0));
+            return;
+        }
+        jLabel3.setText(formatarMoeda(jogo.getPreco()));
+    }
+
+    private void adicionarItemNaTabela() {
+        if (clienteSelecionado == null) {
+            JOptionPane.showMessageDialog(this, "Pesquise e selecione um cliente antes de adicionar o jogo.", "Adicionar jogo", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        Jogo jogo = getJogoSelecionado();
+        if (jogo == null) {
+            JOptionPane.showMessageDialog(this, "Selecione um jogo disponível.", "Adicionar jogo", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        int quantidade = (Integer) jSpinner1.getValue();
+        if (quantidade <= 0) {
+            JOptionPane.showMessageDialog(this, "Informe uma quantidade maior que zero.", "Adicionar jogo", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        float subtotal = jogo.getPreco() * quantidade;
+        DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
+        modelo.addRow(new Object[]{
+            clienteSelecionado.getNome(),
+            jogo.getNome(),
+            quantidade,
+            formatarMoeda(jogo.getPreco()),
+            formatarMoeda(subtotal)
+        });
+        jogosVenda.add(jogo);
+        quantidadesVenda.add(quantidade);
+        subtotaisItens.add(subtotal);
+        valorTotal += subtotal;
+        atualizarValorTotal();
+    }
+
+    private void excluirItemSelecionado() {
+        int linhaSelecionada = jTable1.getSelectedRow();
+        if (linhaSelecionada < 0) {
+            JOptionPane.showMessageDialog(this, "Selecione um item da tabela para excluir.", "Adicionar jogo", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
+        int linhaModelo = jTable1.convertRowIndexToModel(linhaSelecionada);
+        jogosVenda.remove(linhaModelo);
+        quantidadesVenda.remove(linhaModelo);
+        float subtotal = subtotaisItens.remove(linhaModelo);
+        modelo.removeRow(linhaModelo);
+        valorTotal = Math.max(0, valorTotal - subtotal);
+        atualizarValorTotal();
+    }
+
+    private void salvarVenda() {
+        Venda venda = new Venda(new Date(), valorTotal, clienteSelecionado);
+
+        for (int i = 0; i < jogosVenda.size(); i++) {
+            Jogo jogo = jogosVenda.get(i);
+            int quantidade = quantidadesVenda.get(i);
+            ItemVenda item = new ItemVenda(quantidade, jogo.getPreco(), venda, jogo);
+            venda.getItensVenda().add(item);
+        }
+
+        try {
+            GerenciadorInterfaceGrafica.getMyInstance().getGerenciadorDominio().inserir(venda);
+            JOptionPane.showMessageDialog(this, "Venda registrada com sucesso.");
+            limparVendaAtual();
+        } catch (HibernateException ex) {
+            JOptionPane.showMessageDialog(this, "Pagamento confirmado, mas ocorreu erro ao registrar a venda: "
+                    + ex.getMessage(), "Finalizar venda", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void limparVendaAtual() {
+        ((DefaultTableModel) jTable1.getModel()).setRowCount(0);
+        jogosVenda.clear();
+        quantidadesVenda.clear();
+        subtotaisItens.clear();
+        valorTotal = 0;
+        atualizarValorTotal();
+    }
+
+    private void atualizarValorTotal() {
+        jLabel9.setText(formatarMoeda(valorTotal));
+    }
+
+    private boolean validarFinalizacao() {
+        if (clienteSelecionado == null) {
+            JOptionPane.showMessageDialog(this, "Selecione um cliente antes de finalizar.", "Finalizar venda", JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+
+        if (((DefaultTableModel) jTable1.getModel()).getRowCount() == 0) {
+            JOptionPane.showMessageDialog(this, "Adicione pelo menos um jogo na tabela.", "Finalizar venda", JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+
+        return true;
+    }
+
+    private String formatarMoeda(float valor) {
+        return formatoMoeda.format(valor);
+    }
+
+    private void ajustarDesign(java.awt.Frame parent) {
+        setTitle("Jogos");
+        setLocationRelativeTo(parent);
+        setResizable(false);
+        jTabbedPane1.setTitleAt(0, "Adicionar jogo");
+        jTabbedPane1.setTitleAt(1, "Cadastrar jogo");
+        jTable1.setModel(new DefaultTableModel(new Object[]{"Cliente", "Jogo", "Qtd.", "Unit.", "Subtotal"}, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        });
+        jTable1.setFillsViewportHeight(true);
+        jTextField2.setEditable(false);
+        jTextField2.setToolTipText("Pesquise e selecione um cliente");
+        jSpinner1.setModel(new javax.swing.SpinnerNumberModel(1, 1, 99, 1));
+        jSpinner2.setModel(new javax.swing.SpinnerNumberModel(1, 1, 999, 1));
+        txtFildPreço.setFormatterFactory(null);
+        txtFildPreço.setText("");
+        txtFildPreço.setToolTipText("Exemplo: 18,00");
+        bntPesquisar.setToolTipText("Pesquisar cliente");
+        bntaCancelar.setText("Cancelar");
+        jList1.setBorder(javax.swing.BorderFactory.createTitledBorder("Jogos disponíveis"));
+        jLabel6.setText("Preço");
+        jLabel8.setText("Preço unitário");
+        jLabel11.setText("Gênero");
+        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[]{"Ação", "Suspense", "Aventura", "RPG"}));
+        jLabel12.setText("Situação");
+        jLabel13.setText("Classificação");
+        jCheckBox1.setText("Disponível");
+        jCheckBox2.setText("Indisponível");
+        //jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Descrição"));
+        getRootPane().setDefaultButton(jButton6);
+        atualizarPrecoSelecionado();
+        atualizarValorTotal();
+    }
+
+    private void salvarJogo() {
+        String nome = jTextField3.getText().trim();
+        String plataforma = String.valueOf(jComboBox1.getSelectedItem());
+        String genero = String.valueOf(jComboBox2.getSelectedItem());
+        String classificacao = String.valueOf(jComboBox3.getSelectedItem());
+        int quantidade = (Integer) jSpinner2.getValue();
+
+        if (nome.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Informe o nome do jogo.", "Cadastro de Jogo", JOptionPane.WARNING_MESSAGE);
+            jTextField3.requestFocus();
+            return;
+        }
+
+        if (plataforma == null || plataforma.trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Selecione a plataforma do jogo.", "Cadastro de Jogo", JOptionPane.WARNING_MESSAGE);
+            jComboBox1.requestFocus();
+            return;
+        }
+
+        if (genero == null || genero.trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Selecione o genero do jogo.", "Cadastro de Jogo", JOptionPane.WARNING_MESSAGE);
+            jComboBox2.requestFocus();
+            return;
+        }
+
+        if (classificacao == null || classificacao.trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Selecione a classificacao do jogo.", "Cadastro de Jogo", JOptionPane.WARNING_MESSAGE);
+            jComboBox3.requestFocus();
+            return;
+        }
+
+        if (quantidade <= 0) {
+            JOptionPane.showMessageDialog(this, "Informe uma quantidade maior que zero.", "Cadastro de Jogo", JOptionPane.WARNING_MESSAGE);
+            jSpinner2.requestFocus();
+            return;
+        }
+
+        if (!jCheckBox1.isSelected() && !jCheckBox2.isSelected()) {
+            JOptionPane.showMessageDialog(this, "Selecione a situacao do jogo.", "Cadastro de Jogo", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        float preco;
+        try {
+            preco = lerPreco();
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "Informe um preço válido para o jogo.", "Cadastro de Jogo", JOptionPane.WARNING_MESSAGE);
+            txtFildPreço.requestFocus();
+            return;
+        }
+
+        Jogo jogo = new Jogo(nome, genero, preco, classificacao);
+
+        try {
+            GerenciadorInterfaceGrafica.getMyInstance().getGerenciadorDominio().inserir(jogo);
+            JOptionPane.showMessageDialog(this, "Jogo cadastrado com sucesso.");
+            limparCamposJogo();
+            carregarJogosDisponiveis();
+        } catch (HibernateException ex) {
+            JOptionPane.showMessageDialog(this, "Erro ao cadastrar jogo: " + ex.getMessage(), "Cadastro de Jogo", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private float lerPreco() {
+        String textoPreco = txtFildPreço.getText().trim().replace(" ", "");
+        if (textoPreco.isEmpty() || textoPreco.equals(",")) {
+            throw new NumberFormatException("Preco vazio");
+        }
+        textoPreco = textoPreco.replace("R$", "");
+        if (textoPreco.contains(",")) {
+            textoPreco = textoPreco.replace(".", "").replace(",", ".");
+        }
+        float preco = Float.parseFloat(textoPreco);
+        if (preco <= 0) {
+            throw new NumberFormatException("Preco menor ou igual a zero");
+        }
+        return preco;
+    }
+
+    private void limparCamposJogo() {
+        jTextField3.setText("");
+        txtFildPreço.setValue(null);
+        jSpinner2.setValue(1);
+        jComboBox1.setSelectedIndex(0);
+        jComboBox2.setSelectedIndex(0);
+        jComboBox3.setSelectedIndex(0);
+        jCheckBox1.setSelected(true);
+        jTextField3.requestFocus();
+    }
+
+    private void carregarJogosDisponiveis() {
+        try {
+            List<Jogo> jogos = GerenciadorInterfaceGrafica.getMyInstance().getGerenciadorDominio().listar(Jogo.class);
+            jogosDisponiveis = jogos;
+            DefaultListModel<String> modelo = new DefaultListModel<>();
+            for (Jogo jogo : jogos) {
+                modelo.addElement(jogo.toString());
+            }
+            jList1.setModel(modelo);
+            if (!jogosDisponiveis.isEmpty()) {
+                jList1.setSelectedIndex(0);
+            } else {
+                atualizarPrecoSelecionado();
+            }
+        } catch (HibernateException ex) {
+            jogosDisponiveis = new ArrayList<>();
+            JOptionPane.showMessageDialog(this, "Erro ao carregar jogos: " + ex.getMessage(), "Cadastro de Jogo", JOptionPane.ERROR_MESSAGE);
+        }
+    }
 
     /**
      * @param args the command line arguments
@@ -516,7 +815,6 @@ public class DlgCadastrarAdicionarJogo extends javax.swing.JDialog {
     private javax.swing.JList<String> jList1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSeparator jSeparator1;

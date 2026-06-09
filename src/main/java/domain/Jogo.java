@@ -93,4 +93,9 @@ public class Jogo {
     public void setItensVenda(List<ItemVenda> itensVenda) {
         this.itensVenda = itensVenda;
     }
+
+    @Override
+    public String toString() {
+        return nome + " - R$ " + preco;
+    }
 }
